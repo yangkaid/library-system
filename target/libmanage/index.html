@@ -1,0 +1,93 @@
+<!doctype html>
+	<html lang="zh" class="no-js">
+			<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
+			<link rel="stylesheet" href="css/style.css"> <!-- Gem style -->
+			<script src="js/modernizr.js"></script>
+
+</head>
+<script src="js/jquery.min.js"></script>
+<script src="js/main.js"></script> <!-- Gem jQuery -->
+
+<script>
+	$(function () {
+		$("#btn-sub").click(function () {
+
+			$.post("/loginServlet",$("#form1").serialize(),function (date) {
+
+				console.log(date);
+
+				// location.href = "index.html";
+				if (date.flag){
+					console.log(date);
+					// location.href = "index.html";
+
+				}else{
+					console.log(date);
+					alert("账号或密码错误");
+				}
+			})
+		})
+	})
+</script>
+<body>
+
+	<div style="z-index: 10000;
+    position: absolute;
+    top: -90px;
+    left:calc(50% - 244px);
+		"  class="cd-user-modal is-visible"> <!-- this is the entire modal form, including the background -->
+		<div class="cd-user-modal-container"> 
+			<ul class="cd-switcher">
+				<li><a href="#0" class="selected">用户登录</a></li>
+				<li><a href="#0">管理员登录</a></li>
+			</ul>
+			<div id="cd-login" class="is-visible is-selected"> <!-- log in form -->
+				<form class="cd-form" id="form1" action="loginServlet" method="post">
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-username">账户名</label>
+						<input class="full-width has-padding has-border" name="username" id="signin-email" type="phone" placeholder="请输入用户名">
+						<span class="cd-error-message">账户名错误</span>
+					</p>
+					<p class="fieldset">
+						<label class="image-replace cd-password" for="signup-password">密码</label>
+						<input class="full-width has-padding has-border" name="password" id="signup-password" type="text"  placeholder="请输入密码">
+						<span class="cd-error-message">格式错误!</span>
+							
+					</p>
+					
+					<p class="fieldset">
+						<input class="full-width" id="btn-sub" type="submit"  value="登录">
+					</p>
+				</form>
+			</div> <!-- cd-login -->
+			<div id="cd-signup"> <!-- sign up form -->
+				<form class="cd-form">
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-username">用户名</label>
+						<input class="full-width has-padding has-border" id="signup-username" type="text" placeholder="请输入用户名">
+						<span class="cd-error-message">格式错误!</span>
+					</p>
+					
+					<p class="fieldset">
+						<label class="image-replace cd-password" for="signin-password">验证码</label>
+						<input class="full-width has-padding has-border" id="signin-password" type="text"  placeholder="请输入密码">
+						<span class="cd-error-message">密码错误</span>
+					
+					</p>
+					<p class="fieldset">
+						<input class="full-width has-padding" id="btn_sub" type="submit"  value="登录">
+					</p>
+				</form>
+
+				<!-- <a href="#0" class="cd-close-form">Close</a> -->
+			</div> <!-- cd-signup -->
+		</div> <!-- cd-user-modal-container -->
+
+	</div> <!-- cd-user-modal -->
+
+
+</body>
+</html>

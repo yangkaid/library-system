@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <script src="js/jquery.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.min.js"></script> -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+
+</head>
+
+<body>
+    <div id="app">
+        <nav class="navbar navbar-inverse" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">图书管理系统</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">欢迎您，</a></li>
+                    <li>
+                        <a href="#">杨凯</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+
+
+                    <div class="list-group">
+                        <!-- 要注意可以在click=""中直接给flag赋值，用来切换页面很方便，flag的值好像不能动态变化 -->
+                        <a class="list-group-item" href="#" @click.prevent="flag=true" :class="{active:flag}">
+                            <h5 class="list-group-item-heading">图书管理</h5>
+
+                        </a>
+                        <a class="list-group-item" href="#" @click.prevent="flag=false" :class="{active:!flag}">
+                            <h5 class="list-group-item-heading">用户管理</h5>
+
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-9">
+
+
+                    <div class="panel panel-primary" v-show="flag">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">图书管理 <span class="glyphicon glyphicon-book pull-right"></span>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+
+                            <div style="margin-bottom: 20px;">
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#book-id">添加图书</button>
+                            </div>
+
+                            <table class="table table-striped table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>图书id</th>
+                                        <th>图书名称</th>
+                                        <th>作者</th>
+                                        <th>出版商</th>
+                                        <th>定价</th>
+                                        <th>借书用户名</th>
+
+                                        <th>删除图书</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in booklist" :key="item.bookid">
+                                        <td>{{item.bookid}}</td>
+                                        <td>{{item.bookname}}</td>
+                                        <td>{{item.author}}</td>
+                                        <th>{{item.publisher}}</th>
+                                        <th>{{item.dingjia}}</th>
+                                        <th>{{item.username}}</th>
+
+                                        <td>
+                                            <button class="btn btn-primary btn-sm pull-left"
+                                                @click="delBook(item.bookid)" >删除</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+
+
+                    <div class="panel panel-primary" v-show="!flag">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">用户管理<span class="glyphicon glyphicon-user pull-right"></span></h3>
+                        </div>
+                        <div class="panel-body">
+                            <div style="margin-bottom: 20px;">
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#user-id">添加用户</button>
+                            </div>
+
+                            <table class="table table-striped table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>用户名</th>
+                                        <th>用户密码</th>
+                                        <th>用户姓名</th>
+                                        
+                                        <th>删除用户</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in userlist">
+                                        <td>{{item.username}}</td>
+                                        <td>{{item.password}}</td>
+                                        <td>{{item.name}}</td>
+                                        
+                                        <th>
+                                            <button class="btn btn-primary btn-sm pull-left"
+                                                @click="delUser(item.username)">删除</button>
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    </div>
+
+
+                    <!-- 添加图书 -->
+                    <div class="modal fade" id="book-id">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"
+                                        aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">添加图书</h4>
+                                </div>
+                                <div class="modal-body">
+
+                                    <form action="maneAddBookServlet" method="post" id="book">
+                                        <label class="form-inline">
+                                            图书id：
+                                            <input type="text" class="form-control" v-model="bookid" name="bookid">
+                                        </label>
+                                        <label class="form-inline">
+                                            图书姓名:
+                                            <input type="text" class="form-control" v-model="bookname" name="bookname">
+                                        </label>
+                                        <label class="form-inline">
+                                            作者:
+                                            <input type="text" class="form-control" v-model="author" name="author">
+                                        </label>
+
+                                        <label class="form-inline">
+                                            出版社：
+                                            <input type="text" class="form-control" v-model="publisher"
+                                                name="publisher">
+                                        </label>
+                                        <label class="form-inline">
+                                            定价：
+                                            <input type="text" class="form-control" v-model="dingjia" name="dingjia">
+                                        </label>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    <button type="button" class="btn btn-primary" @click="addBook" data-dismiss="modal">提交数据</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 添加用户 -->
+                    <div class="modal fade" id="user-id">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"
+                                        aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">添加用户</h4>
+                                </div>
+                                <div class="modal-body">
+
+                                    <form action="maneAddUserServlet" method="post" id="user">
+                                        <label class="form-inline">
+                                            用户名:
+                                            <input type="text" class="form-control" name="username"v-model="username">
+                                        </label>
+                                        <label class="form-inline">
+                                            用户密码:
+                                            <input type="text" class="form-control" name="password"v-model="password">
+                                        </label>
+                                        <label class="form-inline">
+                                            用户姓名:
+                                            <input type="text" class="form-control" name="name"v-model="name">
+                                        </label>
+                                    </form>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    <button type="button" class="btn btn-primary" @click="addUser" data-dismiss="modal">提交数据</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var vm = new Vue({
+                    el: '#app',
+                    data: {
+                        booklist: [],
+                        userlist: [],
+                        flag: true,
+                        count: 0,
+                        bookid: '',
+                        bookname: '',
+                        author: '',
+                        publisher: '',
+                        dingjia: '',
+                        username: '',
+                        password: '',
+                        name: ''
+                    },
+                    created: function () {
+                        this.getBook();
+                        this.getUser();
+
+
+                    },
+                    methods: {
+
+                        delBook: function (id) {
+                            console.log(id);
+                         
+                        for (let i = 0; i < this.booklist.length; i++) {
+                        if (this.booklist[i].bookid === id) { 
+                            this.booklist.splice(i, 1);
+                            
+                        }
+                        
+                         }
+
+                        },
+
+                        delUser:function(username){
+                            console.log(username);
+                            for(let i=0;i<this.booklist.length;i++){
+                                console.log(this.userlist[i].username)
+                                if(this.userlist[i].username == username){
+                                    this.userlist.splice(i,1);
+                                }
+                            }
+
+                        },
+                        getBook: function () {
+
+                            // 方法：$http.post(url, 传给服务器的请求体中的数据， {emulateJSON:true})
+                            // 通过 post 方法的第三个参数{ emulateJSON: true } ，来设置 提交的内容类型 为 普通表单数据格式
+                            this.$http.post("/bookServlet", {
+                                    emulateJSON: true
+                                })
+                                .then(function (response) {
+
+
+                                        this.booklist = response.body;
+                                        console.log(this.booklist)
+                                    },
+                                    function (error) {
+
+                                    })
+                        },
+
+                        getUser: function () {
+                            this.$http.post("/findUserServlet", {
+                                    emulateJSON: true
+                                })
+                                .then(function (response) {
+
+
+                                        this.userlist = response.body;
+                                        console.log(this.userlist)
+                                    },
+                                    function (error) {
+
+                                    })
+
+
+                        },
+                        setBook: function () {
+                            $.post("/maneAddBookServlet", $("#book").serialize(), function (date) {
+
+                            })
+                        },
+                        setUser: function () {
+                            $.post("/maneAddUserServlet", $("#user").serialize(), function (date) {
+
+                            })
+
+                        },
+
+                        addBook: function () {
+                            var book = {
+                                bookid: this.bookid,
+                                bookname: this.bookname,
+                                author: this.author,
+                                publisher: this.publisher,
+                                dingjia: this.dingjia
+
+                            };
+                            this.booklist.push(book);
+                            this.setBook();
+                            
+                        },
+
+
+
+
+                        addUser: function () {
+                            var user = {
+                                username: this.username,
+                                password: this.password,
+                                name: this.name
+                            };
+                            this.userlist.push(user);
+                            this.setUser();
+                            
+
+                        }
+                    }
+                    })
+    </script>
+</body>
+
+</html>

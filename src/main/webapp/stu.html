@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="js/vue.js"></script>
+    <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+
+</head>
+
+<body>
+    <div id="app">
+        
+            <nav class="navbar navbar-inverse" role="navigation">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">图书管理系统</a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">欢迎您，</a></li>
+                        <li>
+                            <a href="#">杨凯</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+
+
+                        <div class="list-group">
+                            <a href="stu.html" class="list-group-item active">
+                                <h5 class="list-group-item-heading">我的借阅</h5>
+
+                            </a>
+                            <a href="stu_search.html" class="list-group-item">
+                                <h5 class="list-group-item-heading">查询图书</h5>
+
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">我的借阅 <span class="glyphicon glyphicon-book pull-right"></span>
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+
+                                <table class="table table-striped table-hover table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>图书id</th>
+                                            <th>图书名称</th>
+                                            <th>作者</th>
+                                            <th>出版商</th>
+                                            <th>定价</th>
+                                            <th>借书时间</th>
+                                            <th>还书时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="item in list" :key="item.bookid">
+                                            <td>{{item.bookid}}</td>
+                                            <td>{{item.bookname}}</td>
+                                            <td>{{item.author}}</td>
+                                            <th>{{item.publisher}}</th>
+                                            <th>{{item.dingjia}}</th>
+                                            <th>{{item.starttime}}</th>
+                                            <th>{{item.endtime}}</th>
+                                            <th>
+                                                <button class="btn btn-primary btn-sm pull-left"
+                                                    @click="del(item.bookid)">还书</button>
+                                            </th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+
+                list: [],
+                
+            },
+            created: function () {
+                this.getList();
+                
+
+            },
+            methods: {
+                
+                del: function (id) {
+                    console.log(id);
+                    this.returnBook(id);
+                    for (let i = 0; i < this.list.length; i++) {
+                        if (this.list[i].bookid === id) { 
+                            this.list.splice(i, 1);
+                            
+                        }
+                        
+                    }
+
+                },
+                
+                getList: function () {
+
+                    // 方法：$http.post(url, 传给服务器的请求体中的数据， {emulateJSON:true})
+                    // 通过 post 方法的第三个参数{ emulateJSON: true } ，来设置 提交的内容类型 为 普通表单数据格式
+                    this.$http.post("/userbookServlet", {
+                            username: localStorage.getItem("username")
+                        }, {
+                            emulateJSON: true
+                        })
+                        .then(function (response) {
+
+                                console.log(response.body);
+                                this.list = response.body;
+                            },
+                            function (error) {
+
+                            })
+                },
+
+                returnBook:function(bookid){
+                    console.log(bookid);
+                    this.$http.post("/returnBookServlet",{
+                        bookid:bookid,
+                        
+                    },{
+                        emulateJSON:true
+                    })
+                    .then(function(response){
+                        
+                    },
+                    function(error){
+
+                    })
+                }
+            }
+        })
+    </script>
+
+</body>
+
+</html>
